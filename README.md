@@ -14,3 +14,8 @@ Run `pbiviz install-cert` in bash
 `pbiviz new your-project-name`
 
 # Add author
+Added author and email to pbiviz.json
+
+# Enabled DEV mode
+https://learn.microsoft.com/en-us/power-bi/developer/visuals/environment-setup?tabs=service#enable-developer-mode
+
