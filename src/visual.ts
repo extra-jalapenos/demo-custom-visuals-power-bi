@@ -28,7 +28,7 @@
 import powerbi from "powerbi-visuals-api";
 import { FormattingSettingsService } from "powerbi-visuals-utils-formattingmodel";
 import "./../style/visual.less";
-import * as d3 from "d3";
+import { select } from "d3-selection";
 
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
@@ -36,10 +36,10 @@ import IVisual = powerbi.extensibility.visual.IVisual;
 import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 import { VisualFormattingSettingsModel } from "./settings";
-import * as dataTransform from "./dataTransform";
-import * as calendarLayout from "./calendarLayout";
 import * as d3Renderer from "./d3Renderer";
 import { RenderConfig } from "./types";
+import {buildCalendarGrid} from "./calendarLayout";
+import {extractDataPoints} from "./dataTransform";
 
 export class Visual implements IVisual {
     private events: IVisualEventService;
@@ -67,7 +67,7 @@ export class Visual implements IVisual {
 
             const categorical = options.dataViews[0].categorical;
 
-            const dataPoints = dataTransform.extractDataPoints(categorical);
+            const dataPoints = extractDataPoints(categorical);
 
             if (!dataPoints || dataPoints.length === 0) {
                 this.showNoDataMessage();
@@ -75,7 +75,7 @@ export class Visual implements IVisual {
                 return;
             }
 
-            const calendar = calendarLayout.buildCalendarGrid(dataPoints);
+            const calendar = buildCalendarGrid(dataPoints);
 
             const tileColorValue = this.formattingSettings.dataPointCard.tileColor.value.value || "#1f77b4";
             const maxOpacityValue = this.formattingSettings.dataPointCard.maxOpacity.value || 1.0;
@@ -98,13 +98,13 @@ export class Visual implements IVisual {
     }
 
     private showNoDataMessage(): void {
-        d3.select(this.target).selectAll("*").remove();
-        const div = d3.select(this.target).append("div").attr("class", "no-data-message");
+        select(this.target).selectAll("*").remove();
+        const div = select(this.target).append("div").attr("class", "no-data-message");
         div.text("No data available");
     }
 
     public destroy(): void {
-        d3.select(this.target).selectAll("*").remove();
+        select(this.target).selectAll("*").remove();
     }
 
     /**
