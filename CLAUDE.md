@@ -233,3 +233,9 @@ Before upgrading any dependency:
 - **Power BI Desktop**: Install the generated `.pbiviz` file to test in production context.
 - **Console Logging**: Add `console.log()` in `update()` to trace data flow. Remove before committing.
 - **pbiviz CLI Help**: Run `pbiviz --help` for additional commands (e.g., `pbiviz validate-cert`).
+
+## Clean Code guidelines
+- use speaking names for variables, functions, classes.
+- Put new types, classes and interfaces due to typescript in types.ts
+- keep the main files (visual.ts) as clean and readable as possible. Data transformations etc. should be in their own files.
+- use an atomic commit approach, as in keep all changes as small as possible while still being one logical step toward the goal.
