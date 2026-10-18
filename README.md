@@ -12,3 +12,5 @@ https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershel
 Run `pbiviz install-cert` in bash
 # Start project
 `pbiviz new your-project-name`
+
+# Add author

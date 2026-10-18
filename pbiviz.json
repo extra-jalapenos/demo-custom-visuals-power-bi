@@ -1,1 +1,26 @@
-{"visual":{"name":"tilechartvisual","displayName":"tilechartvisual","guid":"tilechartvisualF6125BF2C678410A9EBC380A60F56BFE","visualClassName":"Visual","version":"1.0.0.0","description":"","supportUrl":"","gitHubUrl":""},"apiVersion":"5.11.1","author":{"name":"","email":""},"assets":{"icon":"assets/icon.png"},"externalJS":null,"style":"style/visual.less","capabilities":"capabilities.json","dependencies":null,"stringResources":[],"version":"1.0.0.0"}
+{
+  "visual": {
+    "name": "tilechartvisual",
+    "displayName": "tilechartvisual",
+    "guid": "tilechartvisualF6125BF2C678410A9EBC380A60F56BFE",
+    "visualClassName": "Visual",
+    "version": "1.0.0.0",
+    "description": "",
+    "supportUrl": "",
+    "gitHubUrl": ""
+  },
+  "apiVersion": "5.11.1",
+  "author": {
+    "name": "Ally",
+    "email": "dontsendmespam+tilechartvisualbi@posteo.de"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "externalJS": null,
+  "style": "style/visual.less",
+  "capabilities": "capabilities.json",
+  "dependencies": null,
+  "stringResources": [],
+  "version": "1.0.0.0"
+}
