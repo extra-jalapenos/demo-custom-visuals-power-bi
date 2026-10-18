@@ -1,4 +1,4 @@
-import { DataViewCategorical } from 'powerbi-visuals-api';
+import DataViewCategorical = powerbi.DataViewCategorical;
 import { DataPoint, MeasureStats } from './types';
 
 export function extractDataPoints(categorical: DataViewCategorical | undefined): DataPoint[] {

@@ -60,9 +60,7 @@
                 },
                 "maxOpacity": {
                     "type": {
-                        "numeric": {
-                            "value": true
-                        }
+                        "numeric": true
                     }
                 }
             }

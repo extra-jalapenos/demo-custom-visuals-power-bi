@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { CalendarGrid, DataPoint, RenderConfig } from './types';
-import { getWeekdayLabel, calculateMeasureStats } from './calendarLayout';
+import { getWeekdayLabel } from './calendarLayout';
+import {calculateMeasureStats} from "./dataTransform";
 
 export function render(
   container: HTMLElement,
