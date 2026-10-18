@@ -1,6 +1,6 @@
 import DataViewCategorical = powerbi.DataViewCategorical;
 import { DataPoint, MeasureStats } from './types';
-import { extent, median } from "d3-array";
+import { extent, median, sort } from "d3-array";
 
 export function extractDataPoints(categorical: DataViewCategorical | undefined): DataPoint[] {
   if (!categorical || !categorical.categories || !categorical.categories[0] || !categorical.values) {
@@ -63,22 +63,19 @@ export function validateAndNormalize(dataPoints: DataPoint[]): DataPoint[] {
     return true;
   });
 
-  validPoints.sort((a, b) => a.date.getTime() - b.date.getTime());
-
-  return validPoints;
+  return sort(validPoints, (a, b) => a.date.getTime() - b.date.getTime());
 }
 
 export function calculateMeasureStats(dataPoints: DataPoint[]): MeasureStats {
-  const values = dataPoints
-    .map(d => d.value)
-    .filter(v => v !== null && v !== undefined && !isNaN(v as number)) as number[];
+  const values = dataPoints.map(d => d.value);
+  const validValues = values.filter((v): v is number => v !== null && v !== undefined && !isNaN(v));
 
-  if (values.length === 0) {
+  if (validValues.length === 0) {
     return { min: 0, max: 1, median: 0.5, range: 1 };
   }
 
-  const [min, max] = extent(dataPoints.map(d => d.value));
-  const medianValue = median(dataPoints.map(d => d.value));
+  const [min, max] = extent(validValues) as [number, number];
+  const medianValue = median(validValues) as number;
 
   return {
     min,
