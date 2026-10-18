@@ -2,6 +2,21 @@ import DataViewCategorical = powerbi.DataViewCategorical;
 import { DataPoint, MeasureStats } from './types';
 import { extent, median, sort } from "d3-array";
 
+function parseNumberAsDate(num: number): Date | null {
+  if (isNaN(num)) {
+    return null;
+  }
+
+  if (num > 50000) {
+    return new Date(num);
+  }
+
+  const OLE_EPOCH_DIFF = 25567;
+  const MS_PER_DAY = 86400000;
+
+  return new Date((num - OLE_EPOCH_DIFF) * MS_PER_DAY);
+}
+
 export function extractDataPoints(categorical: DataViewCategorical | undefined): DataPoint[] {
   if (!categorical || !categorical.categories || !categorical.categories[0] || !categorical.values) {
     return [];
@@ -36,7 +51,7 @@ export function extractDataPoints(categorical: DataViewCategorical | undefined):
       } else if (typeof categoryValue === 'string') {
         date = new Date(categoryValue);
       } else if (typeof categoryValue === 'number') {
-        date = new Date(categoryValue);
+        date = parseNumberAsDate(categoryValue);
       }
 
       if (date && !isNaN(date.getTime())) {

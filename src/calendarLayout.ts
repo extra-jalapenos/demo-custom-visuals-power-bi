@@ -27,10 +27,10 @@ export function buildCalendarGrid(dataPoints: DataPoint[]): CalendarGrid {
   const days: CalendarDay[] = [];
   const weeks: CalendarDay[][] = [];
   let currentWeek: CalendarDay[] = [];
-  let weekIndex = 0;
 
   allDates.forEach(date => {
     const dayOfWeek = (date.getDay() + 6) % 7;
+    const weekIndex = Math.floor((date.getTime() - startDate.getTime()) / (7 * 24 * 60 * 60 * 1000));
     const dateKey = date.toISOString().split('T')[0];
     const dataPoint = dataPointMap.get(dateKey);
 
@@ -49,7 +49,6 @@ export function buildCalendarGrid(dataPoints: DataPoint[]): CalendarGrid {
     if (dayOfWeek === 6) {
       weeks.push([...currentWeek]);
       currentWeek = [];
-      weekIndex++;
     }
   });
 

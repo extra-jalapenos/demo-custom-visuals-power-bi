@@ -1,7 +1,7 @@
 import { select, Selection } from 'd3-selection';
 import { scaleLinear, scaleBand } from 'd3-scale';
 import { range } from 'd3-array';
-import { CalendarGrid, DataPoint, RenderConfig } from './types';
+import {CalendarDay, CalendarGrid, DataPoint, RenderConfig} from './types';
 import { getWeekdayLabel } from './calendarLayout';
 import {calculateMeasureStats} from "./dataTransform";
 
@@ -50,8 +50,9 @@ function renderTiles(
   config: RenderConfig,
   stats: ReturnType<typeof calculateMeasureStats>
 ): void {
+  console.log("max opacity", stats.max)
   const opacityScale = scaleLinear<number>()
-    .domain([stats.min, stats.max])
+    .domain([0, stats.max])
     .range([0, 1]);
 
   const tiles = g.selectAll('.tile')
@@ -61,26 +62,26 @@ function renderTiles(
 
   tiles.enter()
     .append('rect')
-    .attr('class', d => (d as any).isPresent ? 'tile' : 'tile-empty')
+    .attr('class', d => (d as CalendarDay).isPresent ? 'tile' : 'tile-empty')
     .merge(tiles as any)
-    .attr('x', (d: any) => d.week * config.tileSize)
-    .attr('y', (d: any) => d.dayOfWeek * config.tileSize)
+    .attr('x', (d: CalendarDay) => d.week * config.tileSize)
+    .attr('y', (d: CalendarDay) => d.dayOfWeek * config.tileSize)
     .attr('width', config.tileSize)
     .attr('height', config.tileSize)
-    .attr('fill', (d: any) => {
-      if (!(d as any).isPresent) {
+    .attr('fill', (d: CalendarDay) => {
+      if (!(d as CalendarDay).isPresent) {
         return '#f5f5f5';
       }
       return config.tileColor;
     })
-    .attr('opacity', (d: any) => {
-      if (!(d as any).isPresent || (d as any).value === null) {
-        return 0.3;
+    .attr('opacity', (d: CalendarDay) => {
+      if (!(d as CalendarDay).isPresent || (d as CalendarDay).value === d.value) {
+        return 1;
       }
       return opacityScale((d as any).value);
     })
-    .attr('data-date', (d: any) => (d as any).key)
-    .attr('data-value', (d: any) => (d as any).value !== null ? (d as any).value : 'N/A');
+    .attr('data-date', (d: CalendarDay) => (d as CalendarDay).key)
+    .attr('data-value', (d: CalendarDay) => (d as CalendarDay).value !== null ? (d as CalendarDay).value : 'N/A');
 }
 
 function renderYAxis(
