@@ -28,6 +28,7 @@
 import powerbi from "powerbi-visuals-api";
 import { FormattingSettingsService } from "powerbi-visuals-utils-formattingmodel";
 import "./../style/visual.less";
+import * as d3 from "d3";
 
 import VisualConstructorOptions = powerbi.extensibility.visual.VisualConstructorOptions;
 import VisualUpdateOptions = powerbi.extensibility.visual.VisualUpdateOptions;
@@ -35,6 +36,10 @@ import IVisual = powerbi.extensibility.visual.IVisual;
 import IVisualEventService = powerbi.extensibility.IVisualEventService;
 
 import { VisualFormattingSettingsModel } from "./settings";
+import * as dataTransform from "./dataTransform";
+import * as calendarLayout from "./calendarLayout";
+import * as d3Renderer from "./d3Renderer";
+import { RenderConfig } from "./types";
 
 export class Visual implements IVisual {
     private events: IVisualEventService;
