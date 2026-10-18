@@ -47,10 +47,10 @@ function renderTiles(
   config: RenderConfig,
   stats: ReturnType<typeof calculateMeasureStats>
 ): void {
-  const dataPointMap = new Map<string, DataPoint>();
-  dataPoints.forEach(dp => {
-    dataPointMap.set(dp.key, dp);
-  });
+  const minOpacity = 0.1;
+  const opacityScale = d3.scaleLinear<number>()
+    .domain([stats.min, stats.max])
+    .range([minOpacity, config.maxOpacity]);
 
   const tiles = g.selectAll('.tile')
     .data(calendar.days, (d: any) => d.key);
@@ -75,7 +75,7 @@ function renderTiles(
       if (!(d as any).isPresent || (d as any).value === null) {
         return 0.3;
       }
-      return calculateOpacity((d as any).value, stats.min, stats.max, config.maxOpacity);
+      return opacityScale((d as any).value);
     })
     .attr('data-date', (d: any) => (d as any).key)
     .attr('data-value', (d: any) => (d as any).value !== null ? (d as any).value : 'N/A');
@@ -86,6 +86,10 @@ function renderYAxis(
   calendar: CalendarGrid,
   config: RenderConfig
 ): void {
+  const yScale = d3.scaleBand()
+    .domain(d3.range(7).map(String))
+    .range([0, 7 * config.tileSize]);
+
   const weekdayLabels = g.selectAll('.weekday-label')
     .data(Array.from({ length: 7 }, (_, i) => i));
 
@@ -96,7 +100,7 @@ function renderYAxis(
     .attr('class', 'weekday-label')
     .merge(weekdayLabels as any)
     .attr('x', -8)
-    .attr('y', (d: any) => d * config.tileSize + config.tileSize / 2)
+    .attr('y', (d: any) => (yScale(String(d)) || 0) + config.tileSize / 2)
     .attr('text-anchor', 'end')
     .attr('dominant-baseline', 'middle')
     .attr('font-size', '12px')
@@ -109,6 +113,10 @@ function renderXAxis(
   calendar: CalendarGrid,
   config: RenderConfig
 ): void {
+  const xScale = d3.scaleLinear()
+    .domain([0, calendar.weeks.length])
+    .range([0, calendar.weeks.length * config.tileSize]);
+
   const monthLabels = g.selectAll('.month-label')
     .data(calendar.months);
 
@@ -118,7 +126,7 @@ function renderXAxis(
     .append('text')
     .attr('class', 'month-label')
     .merge(monthLabels as any)
-    .attr('x', (d: any) => (d.startWeek + d.endWeek) / 2 * config.tileSize)
+    .attr('x', (d: any) => xScale((d.startWeek + d.endWeek) / 2))
     .attr('y', -12)
     .attr('text-anchor', 'middle')
     .attr('font-size', '11px')
@@ -127,33 +135,3 @@ function renderXAxis(
     .text((d: any) => `${d.monthLabel} ${d.year}`);
 }
 
-export function calculateOpacity(value: number, min: number, max: number, maxOpacity: number): number {
-  if (max === min) {
-    return maxOpacity;
-  }
-
-  const range = max - min;
-  const normalizedValue = (value - min) / range;
-
-  const minOpacity = 0.1;
-  const opacity = minOpacity + normalizedValue * (maxOpacity - minOpacity);
-
-  return Math.min(Math.max(opacity, minOpacity), maxOpacity);
-}
-
-export function calculateColorWithOpacity(hexColor: string, opacity: number): string {
-  const hex = hexColor.replace('#', '');
-  let r: number, g: number, b: number;
-
-  if (hex.length === 3) {
-    r = parseInt(hex[0] + hex[0], 16);
-    g = parseInt(hex[1] + hex[1], 16);
-    b = parseInt(hex[2] + hex[2], 16);
-  } else {
-    r = parseInt(hex.substring(0, 2), 16);
-    g = parseInt(hex.substring(2, 4), 16);
-    b = parseInt(hex.substring(4, 6), 16);
-  }
-
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-}
