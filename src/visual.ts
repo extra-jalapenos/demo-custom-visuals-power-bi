@@ -44,26 +44,13 @@ import { RenderConfig } from "./types";
 export class Visual implements IVisual {
     private events: IVisualEventService;
     private target: HTMLElement;
-    private updateCount: number;
-    private textNode: Text;
     private formattingSettings: VisualFormattingSettingsModel;
     private formattingSettingsService: FormattingSettingsService;
 
     constructor(options: VisualConstructorOptions) {
-        console.log('Visual constructor', options);
         this.events = options.host.eventService;
         this.formattingSettingsService = new FormattingSettingsService();
         this.target = options.element;
-        this.updateCount = 0;
-        if (document) {
-            const new_p: HTMLElement = document.createElement("p");
-            new_p.appendChild(document.createTextNode("Update count:"));
-            const new_em: HTMLElement = document.createElement("em");
-            this.textNode = document.createTextNode(this.updateCount.toString());
-            new_em.appendChild(this.textNode);
-            new_p.appendChild(new_em);
-            this.target.appendChild(new_p);
-        }
     }
 
     public update(options: VisualUpdateOptions) {
@@ -72,22 +59,51 @@ export class Visual implements IVisual {
         try {
             this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(VisualFormattingSettingsModel, options.dataViews[0]);
 
-            console.log('Visual update', options);
-            if (this.textNode) {
-                this.textNode.textContent = (this.updateCount++).toString();
+            if (!options.dataViews || options.dataViews.length === 0) {
+                d3.select(this.target).html("<div class='no-data-message'>No data available</div>");
+                this.events.renderingFinished(options);
+                return;
             }
+
+            const categorical = options.dataViews[0].categorical;
+
+            const dataPoints = dataTransform.extractDataPoints(categorical);
+
+            if (!dataPoints || dataPoints.length === 0) {
+                d3.select(this.target).html("<div class='no-data-message'>No data available</div>");
+                this.events.renderingFinished(options);
+                return;
+            }
+
+            const calendar = calendarLayout.buildCalendarGrid(dataPoints);
+
+            const tileColorValue = this.formattingSettings.dataPointCard.tileColor.value.value || "#1f77b4";
+            const maxOpacityValue = this.formattingSettings.dataPointCard.maxOpacity.value || 1.0;
+
+            const config: RenderConfig = {
+                tileSize: 18,
+                padding: { top: 40, right: 40, bottom: 40, left: 80 },
+                tileColor: tileColorValue,
+                maxOpacity: maxOpacityValue,
+            };
+
+            d3Renderer.render(this.target, calendar, dataPoints, config);
 
             this.events.renderingFinished(options);
         }
         catch (error) {
-            console.log('Error in update method', error);
-            this.events.renderingFailed(options, String(error))
+            console.error('Error in update method', error);
+            this.events.renderingFailed(options, String(error));
         }
+    }
+
+    public destroy(): void {
+        d3.select(this.target).selectAll("*").remove();
     }
 
     /**
      * Returns properties pane formatting model content hierarchies, properties and latest formatting values, Then populate properties pane.
-     * This method is called once every time we open properties pane or when the user edit any format property. 
+     * This method is called once every time we open properties pane or when the user edit any format property.
      */
     public getFormattingModel(): powerbi.visuals.FormattingModel {
         return this.formattingSettingsService.buildFormattingModel(this.formattingSettings);
