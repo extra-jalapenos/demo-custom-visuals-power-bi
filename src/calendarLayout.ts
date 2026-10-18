@@ -1,3 +1,4 @@
+import * as d3 from 'd3';
 import { DataPoint, CalendarDay, CalendarGrid, CalendarMonth } from './types';
 
 const WEEKDAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -13,29 +14,28 @@ export function buildCalendarGrid(dataPoints: DataPoint[]): CalendarGrid {
     };
   }
 
-  const startDate = new Date(dataPoints[0].date);
-  startDate.setDate(startDate.getDate() - ((startDate.getDay() + 6) % 7));
-
-  const endDate = new Date(dataPoints[dataPoints.length - 1].date);
-  endDate.setDate(endDate.getDate() + (7 - ((endDate.getDay() + 6) % 7)));
+  const startDate = d3.timeMonday.floor(dataPoints[0].date);
+  const endDate = d3.timeMonday.ceil(dataPoints[dataPoints.length - 1].date);
 
   const dataPointMap = new Map<string, DataPoint>();
   dataPoints.forEach(dp => {
     dataPointMap.set(dp.key, dp);
   });
 
+  const allDates = d3.timeDays(startDate, d3.timeDay.offset(endDate, 1));
+
   const days: CalendarDay[] = [];
   const weeks: CalendarDay[][] = [];
   let currentWeek: CalendarDay[] = [];
   let weekIndex = 0;
 
-  for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-    const dayOfWeek = (d.getDay() + 6) % 7;
-    const dateKey = d.toISOString().split('T')[0];
+  allDates.forEach(date => {
+    const dayOfWeek = (date.getDay() + 6) % 7;
+    const dateKey = date.toISOString().split('T')[0];
     const dataPoint = dataPointMap.get(dateKey);
 
     const calendarDay: CalendarDay = {
-      date: new Date(d),
+      date: new Date(date),
       week: weekIndex,
       dayOfWeek,
       value: dataPoint ? dataPoint.value : null,
@@ -51,7 +51,7 @@ export function buildCalendarGrid(dataPoints: DataPoint[]): CalendarGrid {
       currentWeek = [];
       weekIndex++;
     }
-  }
+  });
 
   if (currentWeek.length > 0) {
     weeks.push([...currentWeek]);
