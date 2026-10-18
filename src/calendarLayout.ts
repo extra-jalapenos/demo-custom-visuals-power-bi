@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import { timeMonday, timeDay, timeDays } from 'd3-time';
 import { DataPoint, CalendarDay, CalendarGrid, CalendarMonth } from './types';
 
 const WEEKDAY_ABBR = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -14,15 +14,15 @@ export function buildCalendarGrid(dataPoints: DataPoint[]): CalendarGrid {
     };
   }
 
-  const startDate = d3.timeMonday.floor(dataPoints[0].date);
-  const endDate = d3.timeMonday.ceil(dataPoints[dataPoints.length - 1].date);
+  const startDate = timeMonday.floor(dataPoints[0].date);
+  const endDate = timeMonday.ceil(dataPoints[dataPoints.length - 1].date);
 
   const dataPointMap = new Map<string, DataPoint>();
   dataPoints.forEach(dp => {
     dataPointMap.set(dp.key, dp);
   });
 
-  const allDates = d3.timeDays(startDate, d3.timeDay.offset(endDate, 1));
+  const allDates = timeDays(startDate, timeDay.offset(endDate, 1));
 
   const days: CalendarDay[] = [];
   const weeks: CalendarDay[][] = [];

@@ -1,4 +1,6 @@
-import * as d3 from 'd3';
+import { select, Selection } from 'd3-selection';
+import { scaleLinear, scaleBand } from 'd3-scale';
+import { range } from 'd3-array';
 import { CalendarGrid, DataPoint, RenderConfig } from './types';
 import { getWeekdayLabel } from './calendarLayout';
 import {calculateMeasureStats} from "./dataTransform";
@@ -9,10 +11,10 @@ export function render(
   dataPoints: DataPoint[],
   config: RenderConfig
 ): void {
-  d3.select(container).selectAll('*').remove();
+  select(container).selectAll('*').remove();
 
   if (calendar.weeks.length === 0) {
-    const div = d3.select(container).append("div").attr("class", "no-data-message");
+    const div = select(container).append("div").attr("class", "no-data-message");
     div.text("No data available");
     return;
   }
@@ -23,7 +25,7 @@ export function render(
   const width = Math.max(containerWidth, calendar.weeks.length * config.tileSize + config.padding.left + config.padding.right);
   const height = Math.max(containerHeight, 7 * config.tileSize + config.padding.top + config.padding.bottom);
 
-  const svg = d3.select(container)
+  const svg = select(container)
     .append('svg')
     .attr('class', 'calendar-heatmap-container')
     .attr('width', containerWidth)
@@ -42,14 +44,14 @@ export function render(
 }
 
 function renderTiles(
-  g: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+  g: Selection<SVGGElement, unknown, HTMLElement, unknown>,
   calendar: CalendarGrid,
   dataPoints: DataPoint[],
   config: RenderConfig,
   stats: ReturnType<typeof calculateMeasureStats>
 ): void {
   const minOpacity = 0.1;
-  const opacityScale = d3.scaleLinear<number>()
+  const opacityScale = scaleLinear<number>()
     .domain([stats.min, stats.max])
     .range([minOpacity, config.maxOpacity]);
 
@@ -83,12 +85,12 @@ function renderTiles(
 }
 
 function renderYAxis(
-  g: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+  g: Selection<SVGGElement, unknown, HTMLElement, unknown>,
   calendar: CalendarGrid,
   config: RenderConfig
 ): void {
-  const yScale = d3.scaleBand()
-    .domain(d3.range(7).map(String))
+  const yScale = scaleBand()
+    .domain(range(7).map(String))
     .range([0, 7 * config.tileSize]);
 
   const weekdayLabels = g.selectAll('.weekday-label')
@@ -110,11 +112,11 @@ function renderYAxis(
 }
 
 function renderXAxis(
-  g: d3.Selection<SVGGElement, unknown, HTMLElement, unknown>,
+  g: Selection<SVGGElement, unknown, HTMLElement, unknown>,
   calendar: CalendarGrid,
   config: RenderConfig
 ): void {
-  const xScale = d3.scaleLinear()
+  const xScale = scaleLinear()
     .domain([0, calendar.weeks.length])
     .range([0, calendar.weeks.length * config.tileSize]);
 
