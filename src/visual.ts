@@ -60,7 +60,7 @@ export class Visual implements IVisual {
             this.formattingSettings = this.formattingSettingsService.populateFormattingSettingsModel(VisualFormattingSettingsModel, options.dataViews[0]);
 
             if (!options.dataViews || options.dataViews.length === 0) {
-                d3.select(this.target).html("<div class='no-data-message'>No data available</div>");
+                this.showNoDataMessage();
                 this.events.renderingFinished(options);
                 return;
             }
@@ -70,7 +70,7 @@ export class Visual implements IVisual {
             const dataPoints = dataTransform.extractDataPoints(categorical);
 
             if (!dataPoints || dataPoints.length === 0) {
-                d3.select(this.target).html("<div class='no-data-message'>No data available</div>");
+                this.showNoDataMessage();
                 this.events.renderingFinished(options);
                 return;
             }
@@ -95,6 +95,12 @@ export class Visual implements IVisual {
             console.error('Error in update method', error);
             this.events.renderingFailed(options, String(error));
         }
+    }
+
+    private showNoDataMessage(): void {
+        d3.select(this.target).selectAll("*").remove();
+        const div = d3.select(this.target).append("div").attr("class", "no-data-message");
+        div.text("No data available");
     }
 
     public destroy(): void {

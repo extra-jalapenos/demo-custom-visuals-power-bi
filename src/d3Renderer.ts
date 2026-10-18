@@ -12,7 +12,8 @@ export function render(
   d3.select(container).selectAll('*').remove();
 
   if (calendar.weeks.length === 0) {
-    d3.select(container).html("<div class='no-data-message'>No data available</div>");
+    const div = d3.select(container).append("div").attr("class", "no-data-message");
+    div.text("No data available");
     return;
   }
 
