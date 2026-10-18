@@ -1,5 +1,6 @@
 import DataViewCategorical = powerbi.DataViewCategorical;
 import { DataPoint, MeasureStats } from './types';
+import { extent, median } from "d3-array";
 
 export function extractDataPoints(categorical: DataViewCategorical | undefined): DataPoint[] {
   if (!categorical || !categorical.categories || !categorical.categories[0] || !categorical.values) {
@@ -76,17 +77,13 @@ export function calculateMeasureStats(dataPoints: DataPoint[]): MeasureStats {
     return { min: 0, max: 1, median: 0.5, range: 1 };
   }
 
-  const sorted = [...values].sort((a, b) => a - b);
-  const min = sorted[0];
-  const max = sorted[sorted.length - 1];
-  const median = sorted.length % 2 === 0
-    ? (sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2
-    : sorted[Math.floor(sorted.length / 2)];
+  const [min, max] = extent(dataPoints.map(d => d.value));
+  const medianValue = median(dataPoints.map(d => d.value));
 
   return {
     min,
     max,
-    median,
+    median: medianValue,
     range: max - min,
   };
 }
