@@ -50,10 +50,9 @@ function renderTiles(
   config: RenderConfig,
   stats: ReturnType<typeof calculateMeasureStats>
 ): void {
-  const minOpacity = 0.1;
   const opacityScale = scaleLinear<number>()
     .domain([stats.min, stats.max])
-    .range([minOpacity, config.maxOpacity]);
+    .range([0, 1]);
 
   const tiles = g.selectAll('.tile')
     .data(calendar.days, (d: any) => d.key);
