@@ -48,6 +48,22 @@
                             "fontSize": true
                         }
                     }
+                },
+                "tileColor": {
+                    "type": {
+                        "fill": {
+                            "solid": {
+                                "color": true
+                            }
+                        }
+                    }
+                },
+                "maxOpacity": {
+                    "type": {
+                        "numeric": {
+                            "value": true
+                        }
+                    }
                 }
             }
         }
