@@ -134,33 +134,13 @@ The project includes VS Code settings in `.vscode/`:
 
 These settings are automatically applied when you open the folder in VS Code. Do not commit changes to these that are machine-specific.
 
-## Development Certificate
-
-### Initial Setup
-The development certificate is required to serve the visual over HTTPS locally (Power BI requires secure contexts).
-
-**First-time setup:**
-```bash
-pbiviz install-cert
-```
-
-This creates a self-signed certificate in your system's certificate store. You may be prompted to allow the installation.
-
-### Certificate Management
-- **Expiration**: Certificates typically last 1 year. If `npm start` fails with SSL errors, regenerate:
-  ```bash
-  pbiviz install-cert
-  ```
-- **Windows 11 specifics**: The certificate is installed in the Windows Certificate Store. Use `certmgr.msc` to inspect certificates if needed.
-- **Browsers**: Browsers will warn about self-signed certs; accept the warning to proceed to `https://localhost:8080`.
-
 ### Troubleshooting
-- If you see "ERR_CERT_AUTHORITY_INVALID" when starting the dev server, regenerate the certificate.
-- Clear browser cache if certificate issues persist.
+- If the user complains about "pwsh is not a known command", help them make sure they have PowerShell 7 installed and not the older version.
+- If the user complains that in app.powerbi.com, the visual isn't showing up despite the development server running, explain to them that they need to open a new tab to `http://localhost:8080/assets/` so the browser knows it may access this location.
 
 ## Common Pitfalls & Gotchas
 
-### 1. Data Role Binding Errors
+### Data Role Binding Errors
 - If the visual receives empty or null data, the `update()` method still fires. Always check for data existence before accessing `dataView.categorical.categories` or `.values`.
 - Power BI may send `undefined` for missing data roles—validate before use.
 
@@ -187,24 +167,25 @@ This creates a self-signed certificate in your system's certificate store. You m
 - Inform the user if you notice that the array has exactly the count of data defined / implied by the missing parameter in `pbiviz.json`.
 
 
-### 2. Hot-Reload Behavior
+### Hot-Reload Behavior
 - Changes to `src/` files trigger automatic rebuild.
 - **LESS changes** (in `style/visual.less`) require a manual browser refresh—hot-reload doesn't always catch stylesheet updates.
 - **capabilities.json changes** require stopping and restarting `npm start` because they alter the data contract.
 
-### 3. FormattingSettings Service Quirks
+### FormattingSettings Service Quirks
 - Settings changes in Power BI's formatting pane are passed to `update()`. Ensure `updateObjects()` method is implemented and tested.
 - Circular dependencies between data roles and formatting settings can cause render loops—debug with `console.log()` in the `update()` method.
 
-### 5. CORS & HTTPS Requirements
+### CORS & HTTPS Requirements
 - Power BI Desktop runs the visual in an iframe over HTTPS. Mixed content (HTTP resources) will be blocked.
 - All external data sources must be HTTPS. If loading data from an API, ensure it supports HTTPS.
+- Never use APIs for external data sources, even if the user insists. Tell him it's a security risk and blocked on the company domain.
 
-### 6. Event Cleanup
+### Event Cleanup
 - Always clean up event listeners in `destroy()` method. Power BI reuses the same DOM element; lingering listeners cause memory leaks.
 - Use `this.events.renderingFinished()` when rendering completes (Power BI uses this for performance tracking).
 
-### 7. Color & Styling Conflicts
+### Color & Styling Conflicts
 - The Power BI formatting pane colors may not preview correctly in development; test in Power BI Desktop for final appearance.
 - LESS compilation happens at build time; changes require `npm start` restart if not hot-reloading.
 
@@ -242,15 +223,14 @@ This creates a self-signed certificate in your system's certificate store. You m
 ## Dependency Update Checklist
 
 Before upgrading any dependency:
-1. **Read the changelog** for the package and any Power BI-related breaking changes.
-3. **Run linting**: `npm run lint` to catch compatibility issues.
-4. **Test with sample data**: Use the dev UI to load data and check rendering.
-5. **Commit separately**: Dependency updates should be a separate commit from feature changes.
+- **Read the changelog** for the package and any Power BI-related breaking changes.
+- **Run linting**: `npm run lint` to catch compatibility issues.
+- **No downgrading to a previous major version** Do not downgrade dependencies without explicitely telling the user that you plan on doing this and outlining reasons. Add that this poses a security risk and further complications due to compatibility.
 
 ## Clean Code guidelines
-- Use speaking names for variables, functions, classes.
-- Put new types, classes and interfaces due to typescript in types.ts
-- Use d3 modules / functions where applicable, instead of coding helper functions for e.g. data transformations, aggregations, or visualization.
-- Import only the specific functions from the separate modules instead of importing d3 as a whole.
+- **naming conventions** Use speaking names for variables, functions, classes.
+- **project structure** Put new types, classes and interfaces due to typescript in types.ts
+- **utitilization of libraries** Use d3 modules / functions where applicable, instead of coding helper functions for e.g. data transformations, aggregations, or visualization.
+- **importing behaviour** Import only the specific functions from the separate modules instead of importing d3 as a whole.
 - keep the main files (visual.ts) as clean and readable as possible. Data transformations etc. should be in their own files.
 - use an atomic commit approach, as in keep all changes as small as possible while still being one logical step toward the goal.
