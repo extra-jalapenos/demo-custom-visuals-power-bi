@@ -240,3 +240,5 @@ Before upgrading any dependency:
 - use an atomic commit approach, as in keep all changes as small as possible while still being one logical step toward the goal.
 - **styling** Use CSS styling with classes etc. where possible instead of inline-styling with d3's .attr() method.
 - **chaining** For readability, use new lines for each chained function/ method call, no matter how short the additional one is.
+- **committing** Do not commit directly to main. Switch to or create a new branch for code changes.
+- **branch naming** Prefix branches with either ´feat/´, ´fix/´ or ´chore/´. If the user's instructions aren't clear what the changes will entail, ask clarifying questions to name the branch in a clear and succint fashion.
