@@ -163,8 +163,29 @@ This creates a self-signed certificate in your system's certificate store. You m
 ### 1. Data Role Binding Errors
 - If the visual receives empty or null data, the `update()` method still fires. Always check for data existence before accessing `dataView.categorical.categories` or `.values`.
 - Power BI may send `undefined` for missing data roles—validate before use.
+
+### Too much data
 - The maximum of data passed to the visual is capped at the number defined in capabilites.json: "dataReductionAlgorithm" : { top: {} } equals to the default 1000. The maximum is 30000.
-- the syntax for setting the upper boundary is "dataReductionAlgorithm": { "top": { "count": 30000 } }
+- the syntax for setting the upper boundary is 
+```json
+"dataReductionAlgorithm": { "top": { "count": 30000 } }
+```
+- The data reduction algorithm can be used in categorical, table, or matrix data view mapping. In categorical data mapping, you can add the algorithm to the "categories" and/or "group" section of values for categorical data mapping.
+- example of this would be: 
+```json
+"dataViewMappings": {
+    "categorical": {
+        "categories": {
+            "for": { "in": "category" },
+            "dataReductionAlgorithm": {
+                "window": {
+                    "count": 300
+                }
+            }  
+        }
+  ```
+- Inform the user if you notice that the array has exactly the count of data defined / implied by the missing parameter in `pbiviz.json`.
+
 
 ### 2. Hot-Reload Behavior
 - Changes to `src/` files trigger automatic rebuild.
