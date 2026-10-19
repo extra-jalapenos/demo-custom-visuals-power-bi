@@ -1,4 +1,4 @@
-# About this
+# About this repo
 This is a repo to learn working with the PBVIZ library to configure custom visuals using NodeJS + D3.js
 
 ## Global setup (once)
