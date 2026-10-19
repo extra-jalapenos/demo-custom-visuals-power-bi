@@ -209,6 +209,10 @@ These settings are automatically applied when you open the folder in VS Code. Do
 - D3 v7 uses selection-based API (v6 used method chaining differently). If you encounter `selection.on()` or `.attr()` not working, check you're using v7 syntax.
 - D3 selections are transient—store references if you need to update the same elements repeatedly.
 - Remember to call `.exit().remove()` when binding data to avoid duplicate elements.
+- When binding data, add the used input data attributes to the element with the syntax "data-*". For example, if the attribute `.value` is used to calculate the opacity of an element, use `.attr("data-value", d => d.value)`. Similarly, if the `.category` attribute is used to determine the color, assign `.attr("data-category", d => d.category)` for easier debugging.
+
+### Typescript
+- avoid "any" as a type. Type input to data mappings accurately.
 
 ### FormattingSettingsService
 - Call `this.formattingSettingsService.populateFormattingSettingsModel()` in `update()` to sync formatting pane with current settings.
@@ -220,17 +224,18 @@ These settings are automatically applied when you open the folder in VS Code. Do
 - Use `host.colorPalette` for consistent Power BI colors instead of hardcoded hex values.
 - Call `this.events.renderingStarted()` and `this.events.renderingFinished()` to mark render boundaries (helps Power BI track performance).
 
-## Dependency Update Checklist
+# Dependency Update Checklist
 
 Before upgrading any dependency:
 - **Read the changelog** for the package and any Power BI-related breaking changes.
 - **Run linting**: `npm run lint` to catch compatibility issues.
 - **No downgrading to a previous major version** Do not downgrade dependencies without explicitely telling the user that you plan on doing this and outlining reasons. Add that this poses a security risk and further complications due to compatibility.
 
-## Clean Code guidelines
+# Clean Code guidelines
 - **naming conventions** Use speaking names for variables, functions, classes.
 - **project structure** Put new types, classes and interfaces due to typescript in types.ts
 - **utitilization of libraries** Use d3 modules / functions where applicable, instead of coding helper functions for e.g. data transformations, aggregations, or visualization.
 - **importing behaviour** Import only the specific functions from the separate modules instead of importing d3 as a whole.
 - keep the main files (visual.ts) as clean and readable as possible. Data transformations etc. should be in their own files.
 - use an atomic commit approach, as in keep all changes as small as possible while still being one logical step toward the goal.
+- **styling** Use CSS styling with classes etc. where possible instead of inline-styling with d3's .attr() method.
