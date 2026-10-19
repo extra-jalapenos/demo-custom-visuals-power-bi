@@ -163,6 +163,8 @@ This creates a self-signed certificate in your system's certificate store. You m
 ### 1. Data Role Binding Errors
 - If the visual receives empty or null data, the `update()` method still fires. Always check for data existence before accessing `dataView.categorical.categories` or `.values`.
 - Power BI may send `undefined` for missing data roles—validate before use.
+- The maximum of data passed to the visual is capped at the number defined in capabilites.json: "dataReductionAlgorithm" : { top: {} } equals to the default 1000. The maximum is 30000.
+- the syntax for setting the upper boundary is "dataReductionAlgorithm": { "top": { "count": 30000 } }
 
 ### 2. Hot-Reload Behavior
 - Changes to `src/` files trigger automatic rebuild.
@@ -172,11 +174,6 @@ This creates a self-signed certificate in your system's certificate store. You m
 ### 3. FormattingSettings Service Quirks
 - Settings changes in Power BI's formatting pane are passed to `update()`. Ensure `updateObjects()` method is implemented and tested.
 - Circular dependencies between data roles and formatting settings can cause render loops—debug with `console.log()` in the `update()` method.
-
-### 4. D3 Version-Specific Issues
-- D3 v7 uses selection-based API (v6 used method chaining differently). If you encounter `selection.on()` or `.attr()` not working, check you're using v7 syntax.
-- D3 selections are transient—store references if you need to update the same elements repeatedly.
-- Remember to call `.exit().remove()` when binding data to avoid duplicate elements.
 
 ### 5. CORS & HTTPS Requirements
 - Power BI Desktop runs the visual in an iframe over HTTPS. Mixed content (HTTP resources) will be blocked.
@@ -207,6 +204,9 @@ This creates a self-signed certificate in your system's certificate store. You m
     .merge(selection)
     .attr("x", d => xScale(d.category));
   ```
+- D3 v7 uses selection-based API (v6 used method chaining differently). If you encounter `selection.on()` or `.attr()` not working, check you're using v7 syntax.
+- D3 selections are transient—store references if you need to update the same elements repeatedly.
+- Remember to call `.exit().remove()` when binding data to avoid duplicate elements.
 
 ### FormattingSettingsService
 - Call `this.formattingSettingsService.populateFormattingSettingsModel()` in `update()` to sync formatting pane with current settings.
@@ -222,20 +222,14 @@ This creates a self-signed certificate in your system's certificate store. You m
 
 Before upgrading any dependency:
 1. **Read the changelog** for the package and any Power BI-related breaking changes.
-2. **Test locally**: Run `npm install`, then `npm start` and verify the visual renders.
 3. **Run linting**: `npm run lint` to catch compatibility issues.
 4. **Test with sample data**: Use the dev UI to load data and check rendering.
 5. **Commit separately**: Dependency updates should be a separate commit from feature changes.
 
-## Debugging Tips
-
-- **Browser DevTools**: Open in `https://localhost:8080` to debug TypeScript (source maps enabled).
-- **Power BI Desktop**: Install the generated `.pbiviz` file to test in production context.
-- **Console Logging**: Add `console.log()` in `update()` to trace data flow. Remove before committing.
-- **pbiviz CLI Help**: Run `pbiviz --help` for additional commands (e.g., `pbiviz validate-cert`).
-
 ## Clean Code guidelines
-- use speaking names for variables, functions, classes.
+- Use speaking names for variables, functions, classes.
 - Put new types, classes and interfaces due to typescript in types.ts
+- Use d3 modules / functions where applicable, instead of coding helper functions for e.g. data transformations, aggregations, or visualization.
+- Import only the specific functions from the separate modules instead of importing d3 as a whole.
 - keep the main files (visual.ts) as clean and readable as possible. Data transformations etc. should be in their own files.
 - use an atomic commit approach, as in keep all changes as small as possible while still being one logical step toward the goal.
