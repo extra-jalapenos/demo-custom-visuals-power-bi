@@ -239,3 +239,4 @@ Before upgrading any dependency:
 - keep the main files (visual.ts) as clean and readable as possible. Data transformations etc. should be in their own files.
 - use an atomic commit approach, as in keep all changes as small as possible while still being one logical step toward the goal.
 - **styling** Use CSS styling with classes etc. where possible instead of inline-styling with d3's .attr() method.
+- **chaining** For readability, use new lines for each chained function/ method call, no matter how short the additional one is.
