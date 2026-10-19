@@ -80,20 +80,18 @@ The `dataViewMappings` section maps these to a categorical data view, which Powe
 
 ## Testing & Validation
 Currently, there are no automated tests in the project. Manual testing is done via:
-1. Run `npm start` in the `tilechartvisual/` directory
-2. Open `https://localhost:8080` in a browser to preview the visual
-3. Use the dev UI to load sample data and verify the rendering works
-4. Test with real Power BI Desktop by importing the `.pbiviz` file
+1. Run `npm start`
+2. Open `app.powerbi.com` in a browser and go into editing mode of a dashboard.
+3. Insert the development visual.
+4. Use the dev UI to load sample data and verify the rendering works.
 
-To add unit tests in the future, consider using Jest or Jasmine with appropriate Power BI visual test utilities.
+To add unit tests in the future, consider using Jasmine with appropriate Power BI visual test utilities.
 
 ## Development Workflow
 
-1. **Modify visual logic**: Edit `src/visual.ts` or `src/settings.ts`
-2. **Run `npm start`**: Development server automatically rebuilds on file changes
-3. **Check browser**: The visual updates in real-time (or refresh if needed)
-4. **Run `npm run lint`**: Verify code passes linting rules before committing
-5. **Build for release**: Run `npm run package` to generate the `.pbiviz` file for distribution
+- **Modify visual logic**: Edit `src/visual.ts` or `src/settings.ts`
+- **Run `npm run lint`**: Verify code passes linting rules.
+- **Build for release**: Run `npm run package` to generate the `.pbiviz` file for distribution
 
 ## External Dependencies
 
@@ -137,6 +135,8 @@ These settings are automatically applied when you open the folder in VS Code. Do
 ### Troubleshooting
 - If the user complains about "pwsh is not a known command", help them make sure they have PowerShell 7 installed and not the older version.
 - If the user complains that in app.powerbi.com, the visual isn't showing up despite the development server running, explain to them that they need to open a new tab to `http://localhost:8080/assets/` so the browser knows it may access this location.
+- In case the visual renders, but wrongly, ask the user to supply a copy of the ´dataViews´ object. If not present, add a ´console.log´ of the object to the ´update()´ method.
+- Take the previous interactions into consideration to estimate the user's expertise. E.g. in the case of "copy the dataView console print": when the user has demonstrated no or little coding knowledge, ask whether they know how to use the developer tools in their browser to execute that task and if they want you to guide them through it.
 
 ## Common Pitfalls & Gotchas
 
