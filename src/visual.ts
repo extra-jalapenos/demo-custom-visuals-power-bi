@@ -46,11 +46,13 @@ export class Visual implements IVisual {
     private target: HTMLElement;
     private formattingSettings: VisualFormattingSettingsModel;
     private formattingSettingsService: FormattingSettingsService;
+    private host: powerbi.extensibility.visual.IVisualHost;
 
     constructor(options: VisualConstructorOptions) {
         this.events = options.host.eventService;
         this.formattingSettingsService = new FormattingSettingsService();
         this.target = options.element;
+        this.host = options.host;
     }
 
     public update(options: VisualUpdateOptions) {
@@ -77,17 +79,18 @@ export class Visual implements IVisual {
 
             const calendar = buildCalendarGrid(dataPoints);
 
-            const tileColorValue = this.formattingSettings.dataPointCard.tileColor.value.value || "#1f77b4";
             const maxOpacityValue = this.formattingSettings.dataPointCard.maxOpacity.value || 1.0;
 
             const config: RenderConfig = {
                 tileSize: 18,
                 padding: { top: 40, right: 40, bottom: 40, left: 80 },
-                tileColor: tileColorValue,
+                tileColor: "#1f77b4",
                 maxOpacity: maxOpacityValue,
             };
 
-            d3Renderer.render(this.target, calendar, dataPoints, config);
+            d3Renderer.render(this.target, calendar, dataPoints, config, {
+                colorPalette: this.host.colorPalette,
+            });
 
             this.events.renderingFinished(options);
         }
