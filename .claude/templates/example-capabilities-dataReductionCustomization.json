@@ -1,0 +1,90 @@
+{
+    "dataRoles": [
+        {
+            "displayName": "Row Data",
+            "name": "rows",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Column Data",
+            "name": "columns",
+            "kind": "Grouping"
+        },
+        {
+            "displayName": "Measure Data",
+            "name": "values",
+            "kind": "Measure"
+        }
+    ],
+    "objects": {
+        "dataReductionCustomization": {
+            "properties": {
+                "columnCount": {
+                    "type": {
+                        "numeric": true
+                    }
+                },
+                "rowCount": {
+                    "type": {
+                        "numeric": true
+                    }
+                }
+            }
+        }
+    },
+    "privileges": [],
+    "dataViewMappings": [
+        {
+            "matrix": {
+                "dataVolume": 6,
+                "rows": {
+                    "for": {
+                        "in": "rows"
+                    },
+                    "dataReductionAlgorithm": {
+                        "window": {
+                            "count": 10
+                        }
+                    }
+                },
+                "columns": {
+                    "for": {
+                        "in": "columns"
+                    },
+                    "dataReductionAlgorithm": {
+                        "sample": {
+                            "count": 10
+                        }
+                    }
+                },
+                "values": {
+                    "select": [
+                        {
+                            "for": {
+                                "in": "values"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "dataReductionCustomization": {
+        "matrix": {
+            "columnCount": {
+                "defaultValue": 100,
+                "propertyIdentifier": {
+                    "objectName": "dataReductionCustomization",
+                    "propertyName": "columnCount"
+                }
+            },
+            "rowCount": {
+                "defaultValue": 100,
+                "propertyIdentifier": {
+                    "objectName": "dataReductionCustomization",
+                    "propertyName": "rowCount"
+                }
+            }
+        }
+    }
+}

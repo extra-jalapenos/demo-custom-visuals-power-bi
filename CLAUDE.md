@@ -165,7 +165,9 @@ These settings are automatically applied when you open the folder in VS Code. Do
         }
   ```
 - Inform the user if you notice that the array has exactly the count of data defined / implied by the missing parameter in `pbiviz.json`.
-
+- The fetchMoreData API lets you load data chunks of different sizes as a way of enabling Power BI visuals to bypass the hard limit of a 30000 row data view. In addition to the original approach of aggregating all requested chunks, the API now also supports loading data chunks incrementally.
+- You can configure the number of rows to fetch at a time in advance, or you can use dataReductionCustomization to allow the report author set the chunk size dynamically. This dynamic dataReductionCustomization API is available in version 5.2 and above.
+An example of usage of ´dataReductionCustomization´ in ´capabilities.json´ is in ´example-capabilities-dataReductionCustomization.json´.
 
 ### Hot-Reload Behavior
 - Changes to `src/` files trigger automatic rebuild.
