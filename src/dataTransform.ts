@@ -1,5 +1,5 @@
 import DataViewCategorical = powerbi.DataViewCategorical;
-import { DataPoint, MeasureStats } from './types';
+import { DataPoint, MeasureStats, SeriesValue } from './types';
 import { extent, median, sort } from "d3-array";
 
 function parseNumberAsDate(num: number): Date | null {
@@ -22,50 +22,86 @@ export function extractDataPoints(categorical: DataViewCategorical | undefined):
     return [];
   }
 
-  const categories = categorical.categories[0];
-  const values = categorical.values[0];
+  const dateCategories = categorical.categories[0];
 
-  if (!categories.values || !values.values) {
+  if (!dateCategories.values) {
     return [];
   }
 
-  const categoryCount = categories.values.length;
-  const valueCount = values.values.length;
+  const dataPointMap = new Map<string, DataPoint>();
 
-  if (categoryCount !== valueCount) {
-    console.warn('Category and value counts do not match');
-    return [];
-  }
-
-  const dataPoints: DataPoint[] = [];
-
-  for (let i = 0; i < categoryCount; i++) {
-    const categoryValue = categories.values[i];
-    const measureValue = values.values[i] as number | null;
-
+  dateCategories.values.forEach((dateValue, dateIndex) => {
     let date: Date | null = null;
 
-    if (categoryValue !== null && categoryValue !== undefined) {
-      if (categoryValue instanceof Date) {
-        date = categoryValue;
-      } else if (typeof categoryValue === 'string') {
-        date = new Date(categoryValue);
-      } else if (typeof categoryValue === 'number') {
-        date = parseNumberAsDate(categoryValue);
+    if (dateValue !== null && dateValue !== undefined) {
+      if (dateValue instanceof Date) {
+        date = dateValue;
+      } else if (typeof dateValue === 'string') {
+        date = new Date(dateValue);
+      } else if (typeof dateValue === 'number') {
+        date = parseNumberAsDate(dateValue);
       }
 
       if (date && !isNaN(date.getTime())) {
         const key = date.toISOString().split('T')[0];
-        dataPoints.push({
-          date,
-          value: measureValue,
-          key,
-          isPresent: true,
-        });
+
+        if (!dataPointMap.has(key)) {
+          dataPointMap.set(key, {
+            date,
+            value: null,
+            key,
+            isPresent: false,
+            seriesValues: [],
+          });
+        }
+
+        const dataPoint = dataPointMap.get(key)!;
+        dataPoint.seriesValues = dataPoint.seriesValues || [];
       }
     }
+  });
+
+  if (categorical.values && categorical.values.length > 0) {
+    categorical.values.forEach((valueGroup, seriesIndex) => {
+      const seriesName = valueGroup.source.displayName || `Series ${seriesIndex + 1}`;
+
+      valueGroup.values.forEach((value, dateIndex) => {
+        const dateValue = dateCategories.values[dateIndex];
+        let date: Date | null = null;
+
+        if (dateValue !== null && dateValue !== undefined) {
+          if (dateValue instanceof Date) {
+            date = dateValue;
+          } else if (typeof dateValue === 'string') {
+            date = new Date(dateValue);
+          } else if (typeof dateValue === 'number') {
+            date = parseNumberAsDate(dateValue);
+          }
+
+          if (date && !isNaN(date.getTime())) {
+            const key = date.toISOString().split('T')[0];
+            const dataPoint = dataPointMap.get(key);
+
+            if (dataPoint) {
+              const seriesValue: SeriesValue = {
+                series: seriesName,
+                value: value as number | null,
+                colorIndex: seriesIndex,
+              };
+
+              dataPoint.seriesValues!.push(seriesValue);
+              dataPoint.isPresent = true;
+              if (dataPoint.value === null && value !== null) {
+                dataPoint.value = value as number;
+              }
+            }
+          }
+        }
+      });
+    });
   }
 
+  const dataPoints = Array.from(dataPointMap.values());
   return validateAndNormalize(dataPoints);
 }
 
