@@ -18,7 +18,7 @@ https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershel
 ## Enable dev tools in workspace
 1. Go to your workspace, doesn't matter if prod or not
 2. click on workspace -> gear icon -> developer settings or go to https://app.powerbi.com/user/user-settings/developer-settings?experience=power-bi
-3. This will be checked already. Disable and re-able it. No idea why.
+3. This will potentially be checked already. Disable and re-able it. No idea why.
 4. To check whether this works, go to any report. Under visualizations, you'll have a "developer visual" (german: visuelles Entwicklerelement) indicated with a small icon containg a tag symbol `</>`
 5. If it doesn't show up, run `pbiviz install-cert` again, because if you run it without having one, it will only generate it. Make sure you see a note about installing it.
 6. Go to app.powerbi.com in your report.
@@ -26,7 +26,3 @@ https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershel
 
 # Add author
 Added author and email to pbiviz.json
-
-# Enabled DEV mode
-https://learn.microsoft.com/en-us/power-bi/developer/visuals/environment-setup?tabs=service#enable-developer-mode
-
