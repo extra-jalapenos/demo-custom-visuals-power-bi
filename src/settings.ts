@@ -66,12 +66,6 @@ class DataPointCardSettings extends FormattingSettingsCard {
         value: 12
     });
 
-    tileColor = new formattingSettings.ColorPicker({
-        name: "tileColor",
-        displayName: "Tile Color",
-        value: { value: "#1f77b4" }
-    });
-
     maxOpacity = new formattingSettings.NumUpDown({
         name: "maxOpacity",
         displayName: "Max Opacity",
@@ -80,7 +74,7 @@ class DataPointCardSettings extends FormattingSettingsCard {
 
     name: string = "dataPoint";
     displayName: string = "Data colors";
-    slices: Array<FormattingSettingsSlice> = [this.tileColor, this.maxOpacity, this.defaultColor, this.showAllDataPoints, this.fill, this.fillRule, this.fontSize];
+    slices: Array<FormattingSettingsSlice> = [this.maxOpacity, this.defaultColor, this.showAllDataPoints, this.fill, this.fillRule, this.fontSize];
 }
 
 /**
