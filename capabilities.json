@@ -6,8 +6,8 @@
             "kind": "Grouping"
         },
         {
-            "displayName": "Category",
-            "name": "categoryField",
+            "displayName": "Series",
+            "name": "seriesField",
             "kind": "Grouping"
         },
         {
@@ -54,15 +54,6 @@
                         }
                     }
                 },
-                "tileColor": {
-                    "type": {
-                        "fill": {
-                            "solid": {
-                                "color": true
-                            }
-                        }
-                    }
-                },
                 "maxOpacity": {
                     "type": {
                         "numeric": true
@@ -76,14 +67,14 @@
             "conditions": [
                 {
                     "dateField": { "max": 1, "min": 1 },
-                    "categoryField": { "min": 1, "max": 1 },
+                    "seriesField": { "min": 1 },
                     "value": { "min": 1, "max": 1 }
                 }
             ],
             "categorical": {
                 "categories": {
                     "for":{
-                        "in": "categoryField"
+                        "in": "dateField"
                     },
                     "dataReductionAlgorithm": {
                         "top": { "count": 1000 }
@@ -91,7 +82,7 @@
                 },
                 "values": {
                     "group": {
-                        "by": "categoryField",
+                        "by": "seriesField",
                         "select": [{
                             "for": {
                                 "in": "value"
