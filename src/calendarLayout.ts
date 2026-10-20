@@ -41,6 +41,7 @@ export function buildCalendarGrid(dataPoints: DataPoint[]): CalendarGrid {
       value: dataPoint ? dataPoint.value : null,
       isPresent: !!dataPoint,
       key: dateKey,
+      seriesValues: dataPoint ? dataPoint.seriesValues : undefined,
     };
 
     days.push(calendarDay);
