@@ -40,6 +40,8 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+
+#compiled
 .tmp/
 
 # Snowpack dependency directory (https://snowpack.dev/)
@@ -148,3 +150,8 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# compiled files
+.tmp/*
+.tmp/
+webpack.statistics.dev.html
