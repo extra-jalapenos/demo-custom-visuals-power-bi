@@ -1,8 +1,15 @@
+export interface SeriesValue {
+  series: string;
+  value: number | null;
+  colorIndex: number;
+}
+
 export interface DataPoint {
   date: Date;
   value: number | null;
   key: string;
   isPresent: boolean;
+  seriesValues?: SeriesValue[];
 }
 
 export interface CalendarDay {
@@ -12,6 +19,7 @@ export interface CalendarDay {
   value: number | null;
   isPresent: boolean;
   key: string;
+  seriesValues?: SeriesValue[];
 }
 
 export interface CalendarMonth {
