@@ -244,3 +244,6 @@ Before upgrading any dependency:
 - **chaining** For readability, use new lines for each chained function/ method call, no matter how short the additional one is.
 - **committing** Do not commit directly to main. Switch to or create a new branch for code changes.
 - **branch naming** Prefix branches with either ´feat/´, ´fix/´ or ´chore/´. If the user's instructions aren't clear what the changes will entail, ask clarifying questions to name the branch in a clear and succint fashion.
+
+# Performance optimization
+- The update options contain an attribute "type" which can take different numerical values, defined in enum VisualUpdateType. Recalculations of data for visualization purposes should only be done if the data changes. Resizing e.g. should only re-render.
